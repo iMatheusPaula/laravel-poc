@@ -1,0 +1,54 @@
+name: 🚀 push to main
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  ECR_REPOSITORY: laravel-eventbridge-poc
+  AWS_REGION: us-east-1
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: login to AWS ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: set image tag
+        id: image
+        run: |
+          IMAGE_TAG=$(date -u +'%Y%m%d-%H%M%S')
+          echo "tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "full=${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "latest=${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
+
+      - name: build .docker image
+        run: |
+          docker build \
+            -t ${{ env.ECR_REPOSITORY }}:${{ steps.image.outputs.tag }} \
+            .
+
+      - name: tag image
+        run: |
+          docker tag \
+            ${{ env.ECR_REPOSITORY }}:${{ steps.image.outputs.tag }} \
+            ${{ steps.image.outputs.full }}
+
+      - name: push image to AWS ECR
+        run: .docker push ${{ steps.image.outputs.full }}
