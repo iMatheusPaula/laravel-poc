@@ -19,7 +19,7 @@ class AppointmentController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'scheduled_at' => ['required', 'datetime', 'after:now'],
+            'scheduled_at' => ['required', 'date', 'after:now'],
         ]);
 
         $appointment = Appointment::query()
