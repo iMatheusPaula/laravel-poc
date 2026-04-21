@@ -28,6 +28,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'gcp' => [
+        'project_id' => env('GCP_PROJECT_ID'),
+        'key_file' => env('GCP_KEY_FILE'),
+        'pubsub_topic' => env('GCP_PUBSUB_TOPIC', 'appointment-created'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
