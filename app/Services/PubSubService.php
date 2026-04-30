@@ -38,7 +38,7 @@ final class PubSubService
      */
     public function publish(array $data): void
     {
-        $topic = $this->client->topic('appointment-created');
+        $topic = $this->client->topic('appointments.created');
 
         $message = new MessageBuilder()
             ->setData(json_encode($data))

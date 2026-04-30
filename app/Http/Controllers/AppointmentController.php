@@ -31,7 +31,7 @@ class AppointmentController extends Controller
 
         $pubSub->publish([
             'appointment_id' => $appointment->id,
-            'scheduled_at' => $appointment->scheduled_at,
+            'scheduled_at' => $appointment->scheduled_at->toIso8601String(),
         ]);
 
         return response()->json($appointment, Response::HTTP_CREATED);
