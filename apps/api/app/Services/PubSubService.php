@@ -34,11 +34,12 @@ final class PubSubService
      *
      * @see https://docs.cloud.google.com/pubsub/docs/publisher
      * @param array $data
+     * @param string $topicName
      * @return void
      */
-    public function publish(array $data): void
+    public function publish(array $data, string $topicName): void
     {
-        $topic = $this->client->topic('appointments.created');
+        $topic = $this->client->topic($topicName);
 
         $message = new MessageBuilder()
             ->setData(json_encode($data))
