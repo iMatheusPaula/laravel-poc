@@ -23,7 +23,7 @@ func startSubscriber(config Config) {
 	log.Printf("Subscribing to topic: %s", config.SubscriptionID)
 
 	err = sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
-		log.Printf("Got message: %s", string(msg.Data))
+		handleMessage(msg.Data)
 		msg.Ack()
 	})
 

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Appointment extends Model
 {
     protected $fillable = [
+        'contact_name',
+        'contact_email',
         'scheduled_at',
         'status',
         'finished_at',

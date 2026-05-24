@@ -20,18 +20,24 @@ class AppointmentController extends Controller
     public function store(Request $request, PubSubService $pubSub): JsonResponse
     {
         $validated = $request->validate([
-            'scheduled_at' => ['required', 'date_format:Y-m-d H:i:s', 'after:now'],
+            'contact_name'  => ['required', 'string'],
+            'contact_email' => ['required', 'email'],
+            'scheduled_at'  => ['required', 'date_format:Y-m-d H:i:s', 'after:now'],
         ]);
 
         $appointment = Appointment::query()
             ->create([
-                'scheduled_at' => $validated['scheduled_at'],
-                'status' => AppointmentStatus::PENDING,
+                'contact_name'  => $validated['contact_name'],
+                'contact_email' => $validated['contact_email'],
+                'scheduled_at'  => $validated['scheduled_at'],
+                'status'        => AppointmentStatus::PENDING,
             ]);
 
         $pubSub->publish([
             'appointment_id' => $appointment->id,
-            'scheduled_at' => $appointment->scheduled_at->toIso8601String(),
+            'contact_name'   => $appointment->contact_name,
+            'contact_email'  => $appointment->contact_email,
+            'scheduled_at'   => $appointment->scheduled_at->toIso8601String(),
         ], 'appointments.created');
 
         return response()->json($appointment, Response::HTTP_CREATED);
