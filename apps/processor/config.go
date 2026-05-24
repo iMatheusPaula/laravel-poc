@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	ProjectID string
+	ProjectID      string
+	SubscriptionID string
 }
 
 func LoadConfig() Config {
@@ -19,12 +20,14 @@ func LoadConfig() Config {
 	}
 
 	projectID := os.Getenv("GCP_PROJECT_ID")
+	subscriptionID := os.Getenv("GCP_SUBSCRIPTION_ID")
 
-	if projectID == "" {
-		log.Fatal("PROJECT_ID must be set")
+	if projectID == "" || subscriptionID == "" {
+		log.Fatal("GCP_PROJECT_ID and GCP_SUBSCRIPTION_ID must be set")
 	}
 
 	return Config{
-		ProjectID: projectID,
+		ProjectID:      projectID,
+		SubscriptionID: subscriptionID,
 	}
 }
