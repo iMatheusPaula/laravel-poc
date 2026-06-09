@@ -10,11 +10,11 @@ type Mailer struct {
 	config Config
 }
 
-func newMailer(config Config) *Mailer {
+func NewMailer(config Config) *Mailer {
 	return &Mailer{config}
 }
 
-func (m *Mailer) send(message AppointmentMessage) bool {
+func (m *Mailer) Send(message AppointmentMessage) bool {
 	serverURL := fmt.Sprintf("%s:%d", m.config.SMTPHost, m.config.SMTPPort)
 	auth := smtp.PlainAuth("", m.config.SMTPUsername, m.config.SMTPPassword, m.config.SMTPHost)
 
@@ -34,7 +34,7 @@ func (m *Mailer) send(message AppointmentMessage) bool {
 	err := smtp.SendMail(serverURL, auth, "noreply@test.com", recipients, rawMessage)
 
 	if err != nil {
-		log.Printf("Error on send email", err)
+		log.Printf("Error on send email: %v", err)
 		return false
 	}
 

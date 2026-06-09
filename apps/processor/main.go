@@ -8,7 +8,7 @@ import (
 
 func main() {
 	config := LoadConfig()
-	mailer := newMailer(config)
+	mailer := NewMailer(config)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()

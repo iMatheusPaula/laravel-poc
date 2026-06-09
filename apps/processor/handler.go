@@ -21,5 +21,5 @@ func handleMessage(data json.RawMessage, mailer *Mailer) bool {
 		return false
 	}
 
-	return mailer.send(msg)
+	return mailer.Send(msg)
 }
