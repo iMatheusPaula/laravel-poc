@@ -12,24 +12,14 @@ type AppointmentMessage struct {
 	ScheduledAt   string `json:"scheduled_at"`
 }
 
-func handleMessage(data json.RawMessage) {
+func handleMessage(data json.RawMessage, mailer *Mailer) bool {
 	var msg AppointmentMessage
 
 	err := json.Unmarshal(data, &msg)
-
 	if err != nil {
 		log.Printf("Error unmarshalling message: %v", err)
+		return false
 	}
 
-	sendEmail(msg)
-}
-
-func sendEmail(msg AppointmentMessage) {
-	log.Println("==============================")
-	log.Println("📧 Simulando envio de email...")
-	log.Printf("   Para: %s <%s>", msg.ContactName, msg.ContactEmail)
-	log.Printf("   Assunto: Confirmação de Appointment #%d", msg.AppointmentId)
-	log.Printf("   Agendado para: %s", msg.ScheduledAt)
-	log.Println("   Status: Enviado com sucesso!")
-	log.Println("==============================")
+	return mailer.send(msg)
 }

@@ -7,9 +7,7 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-func startSubscriber(config Config) {
-	ctx := context.Background()
-
+func startSubscriber(ctx context.Context, config Config, mailer *Mailer) {
 	client, err := pubsub.NewClient(ctx, config.ProjectID)
 
 	if err != nil {
@@ -23,7 +21,11 @@ func startSubscriber(config Config) {
 	log.Printf("Subscribing to topic: %s", config.SubscriptionID)
 
 	err = sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
-		handleMessage(msg.Data)
+		result := handleMessage(msg.Data, mailer)
+		if !result {
+			msg.Nack()
+			return
+		}
 		msg.Ack()
 	})
 
