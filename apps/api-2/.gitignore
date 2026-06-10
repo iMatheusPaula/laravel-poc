@@ -36,6 +36,9 @@ yarn-error.log*
 *.sqlite
 *.sqlite-journal
 
+# gcp credentials
+/credentials
+
 # vercel
 .vercel
 

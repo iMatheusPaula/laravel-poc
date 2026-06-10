@@ -2,6 +2,7 @@ import {desc, eq} from "drizzle-orm";
 import {db} from "../db/client";
 import {appointments} from "../db/schema";
 import {HttpError} from "../errors";
+import {PubSubService} from "../pubsub";
 import {AppointmentStatus} from "./appointment-status";
 
 type CreateAppointmentInput = {
@@ -28,6 +29,16 @@ export abstract class AppointmentService {
                 status: AppointmentStatus.PENDING,
             })
             .returning();
+
+        await PubSubService.publish(
+            {
+                appointment_id: appointment.id,
+                contact_name: appointment.contactName,
+                contact_email: appointment.contactEmail,
+                scheduled_at: appointment.scheduledAt,
+            },
+            "appointments.created"
+        );
 
         return appointment;
     }
